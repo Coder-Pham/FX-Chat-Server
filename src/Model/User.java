@@ -6,13 +6,6 @@ public class User {
     private String password;
     private String nickname;
 
-    public User() {
-        this.id = -1;
-        this.username = "";
-        this.password = "";
-        this.nickname = "";
-    }
-
     public User(int id, String username, String password, String nickname) {
         this.id = id;
         this.username = username;

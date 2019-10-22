@@ -81,7 +81,7 @@ public class Database {
 
     public static User getUser(String username) {
         Statement stmt = null;
-        User user = new User();
+        User user = new User(-1,"","","");
 
         try {
             //Execute a query

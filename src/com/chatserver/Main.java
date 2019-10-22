@@ -8,5 +8,6 @@ public class Main {
         Database.getInstance();
         System.out.println(Database.getUserList());
         System.out.println(Database.getUser("quantrancse"));
+        System.out.println(Database.getUser("quantran"));
     }
 }
