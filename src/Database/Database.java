@@ -39,13 +39,13 @@ public class Database {
 
     }
 
-    public static ArrayList<User> get_user_list() {
+    public static ArrayList<User> getUserList() {
         Statement stmt = null;
         ArrayList<User> user_list = new ArrayList<>();
 
         try {
             //Execute a query
-            System.out.println("Creating get_user_list statement...");
+            System.out.println("Creating getUserList statement...");
             stmt = connection.createStatement();
             String sql = "SELECT * FROM fxchatdb.user";
             ResultSet rs = stmt.executeQuery(sql);
@@ -77,5 +77,47 @@ public class Database {
         }//end try
 
         return user_list;
+    }
+
+    public static User getUser(String username) {
+        Statement stmt = null;
+        User user = new User();
+
+        try {
+            //Execute a query
+            System.out.println("Creating getUser statement...");
+            stmt = connection.createStatement();
+            String sql = String.format("SELECT * FROM fxchatdb.user WHERE user_name=\"%s\"", username);
+            ResultSet rs = stmt.executeQuery(sql);
+
+            //Extract data from result set
+            while (rs.next()) {
+                //Retrieve by column name
+                int id = rs.getInt("id");
+                String user_name = rs.getString("user_name");
+                String password = rs.getString("password");
+                String nick_name = rs.getString("nick_name");
+
+                user.setId(id);
+                user.setUsername(user_name);
+                user.setPassword(password);
+                user.setNickname(nick_name);
+            }
+            //Clean-up environment
+            rs.close();
+            stmt.close();
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+        } finally {
+            //finally block used to close resources
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException ignored) {
+            }// nothing we can do
+        }//end try
+
+        return user;
     }
 }

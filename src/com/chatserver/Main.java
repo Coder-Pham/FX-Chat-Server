@@ -6,6 +6,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         //Test
         Database.getInstance();
-        System.out.println(Database.get_user_list());
+        System.out.println(Database.getUserList());
+        System.out.println(Database.getUser("quantrancse"));
     }
 }
