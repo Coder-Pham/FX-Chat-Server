@@ -1,6 +1,6 @@
 package Model;
 
-public class User {
+public class User extends Model {
     private int id;
     private String username;
     private String password;
@@ -49,3 +49,4 @@ public class User {
         return "ID: " + id + ", Username: " + username + ", Password: " + password + ", Nickname: " + nickname;
     }
 }
+
