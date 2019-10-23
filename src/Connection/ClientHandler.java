@@ -35,11 +35,27 @@ public class ClientHandler implements Runnable{
             try
             {
                 //Read request object from client
-                Request request = (Request) this.objectInputStream.readObject();
+                Signal request = (Signal) this.objectInputStream.readObject();
 
                 if(request.getAction().equals("login"))
                 {
                     // Call call loginAPI in authentication controller
+                    User userData = AuthenticationController.loginAPI((User) request.getData());
+                    if(userData.getId() > -1)
+                    {
+                        Signal response = new Signal("login",true,userData,"");
+
+                        // After call loginAPI transfer response to the client
+                        this.objectOutputStream.writeObject(response);
+                    }
+                    else
+                    {
+                        Signal response = new Signal("login",false,userData,"Your account is not valid");
+
+                        // After call loginAPI transfer response to the client
+                        this.objectOutputStream.writeObject(response);
+                    }
+
 
                 }
             }

@@ -2,13 +2,17 @@ package Connection;
 
 import java.io.Serializable;
 
-public class Request implements Serializable {
+public class Signal implements Serializable {
     private String action;
+    private boolean status;
     private Object data;
+    private String error;
 
-    public Request(String action, Object data) {
+    public Signal(String action, boolean status, Object data, String error) {
         this.action = action;
+        this.status = status;
         this.data = data;
+        this.error = error;
     }
 
     public String getAction() {
