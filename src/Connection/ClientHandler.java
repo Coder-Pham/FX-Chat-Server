@@ -30,7 +30,7 @@ public class ClientHandler implements Runnable{
 
     @Override
     public void run() {
-        while(true)
+        while(this.client.isConnected())
         {
             try
             {

@@ -12,6 +12,6 @@ public class Main {
 //        System.out.println(Database.getUser("quantrancse"));
 //        System.out.println(Database.getUser("quantran"));
         Server server = new Server();
-        server.run();
+        server.turnOn();
     }
 }

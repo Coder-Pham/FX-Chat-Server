@@ -24,7 +24,7 @@ public class Server {
         }
     }
 
-    public void run()
+    public void turnOn()
     {
         while (true)
         {
