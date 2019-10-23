@@ -49,6 +49,4 @@ public class User extends Model {
         return "ID: " + id + ", Username: " + username + ", Password: " + password + ", Nickname: " + nickname;
     }
 }
-=======
-}
->>>>>>> ServerSocket listen to user request
+
