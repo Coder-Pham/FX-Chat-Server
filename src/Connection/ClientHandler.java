@@ -37,20 +37,20 @@ public class ClientHandler implements Runnable{
                 //Read request object from client
                 Signal request = (Signal) this.objectInputStream.readObject();
 
-                if(request.getAction().equals("login"))
+                if(request.getAction().equals(Action.LOGIN))
                 {
                     // Call call loginAPI in authentication controller
                     User userData = AuthenticationController.loginAPI((User) request.getData());
                     if(userData.getId() > -1)
                     {
-                        Signal response = new Signal("login",true,userData,"");
+                        Signal response = new Signal(Action.LOGIN,true,userData,"");
 
                         // After call loginAPI transfer response to the client
                         this.objectOutputStream.writeObject(response);
                     }
                     else
                     {
-                        Signal response = new Signal("login",false,userData,"Your account is not valid");
+                        Signal response = new Signal(Action.LOGIN,false,userData,"Your account is not valid");
 
                         // After call loginAPI transfer response to the client
                         this.objectOutputStream.writeObject(response);
@@ -62,6 +62,7 @@ public class ClientHandler implements Runnable{
             catch (IOException | ClassNotFoundException exception)
             {
                 System.out.println(exception);
+                break;
             }
         }
     }

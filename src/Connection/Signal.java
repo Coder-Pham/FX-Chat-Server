@@ -3,23 +3,23 @@ package Connection;
 import java.io.Serializable;
 
 public class Signal implements Serializable {
-    private String action;
+    private Action action;
     private boolean status;
     private Object data;
     private String error;
 
-    public Signal(String action, boolean status, Object data, String error) {
+    public Signal(Action action, boolean status, Object data, String error) {
         this.action = action;
         this.status = status;
         this.data = data;
         this.error = error;
     }
 
-    public String getAction() {
+    public Action getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(Action action) {
         this.action = action;
     }
 
