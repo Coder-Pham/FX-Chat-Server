@@ -1,11 +1,13 @@
 package Connection;
 
 import Config.ConfigVariable;
+import Database.Database;
 import Helper.UserManager;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 
 public class Server {
     private ServerSocket serverSocket;
@@ -17,8 +19,9 @@ public class Server {
         {
             this.serverSocket = new ServerSocket(ConfigVariable.port);
             this.userManager = new UserManager();
+            Database.getInstance();
         }
-        catch (IOException exception)
+        catch (IOException | SQLException exception)
         {
             System.out.println(exception);
         }
