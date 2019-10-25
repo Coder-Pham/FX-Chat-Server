@@ -8,7 +8,7 @@ import Model.User;
 public class Database {
     // JDBC driver name and database URL
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://fxchatdb.mysql.database.azure.com:3306/fxchatdb?serverTimezone=UTC&useSSL=true&requireSSL=false";
+    private static final String DB_URL = "jdbc:mysql://fxchatdb.mysql.database.azure.com:3306/fxchatdb?autoReconnect=true&useUnicode=yes&serverTimezone=UTC&useSSL=true&requireSSL=false";
 
     //  Database credentials
     private static final String USER = "fxchat@fxchatdb";
