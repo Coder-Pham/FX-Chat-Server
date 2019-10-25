@@ -1,8 +1,8 @@
 package Connection;
 
-import java.io.Serializable;
+import Model.Model;
 
-public class Signal implements Serializable {
+public class Signal extends Model {
     private Action action;
     private boolean status;
     private Object data;
