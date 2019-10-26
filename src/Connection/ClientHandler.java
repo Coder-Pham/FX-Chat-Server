@@ -24,46 +24,100 @@ public class ClientHandler implements Runnable{
         }
         catch (IOException exception)
         {
-            System.out.println(exception);
+            System.out.println("ClientHandler-Constructor: " + exception);
+        }
+    }
+
+    private Signal getRequest()
+    {
+        try
+        {
+            return (Signal) this.objectInputStream.readObject();
+        }
+        catch (IOException | ClassNotFoundException exception)
+        {
+            System.out.println("ClientHandler-getRequest(): " + exception);
+            return null;
+        }
+    }
+
+    private boolean sendResponse(Signal response)
+    {
+        try
+        {
+            this.objectOutputStream.writeObject(response);
+            return true;
+        }
+        catch (IOException exception)
+        {
+            System.out.println("ClientHandler-sendResponse(): " + exception);
+            return false;
         }
     }
 
     @Override
     public void run() {
-        while(this.client.isConnected())
+        boolean status = true;
+        while(status && this.client.isConnected())
         {
-            try
+            //Read request object from client
+            Signal request = this.getRequest();
+            if(request == null)
             {
-                //Read request object from client
-                Signal request = (Signal) this.objectInputStream.readObject();
-
-                if(request.getAction().equals(Action.LOGIN))
-                {
-                    // Call call loginAPI in authentication controller
-                    User userData = AuthenticationController.loginAPI((User) request.getData());
-                    if(userData.getId() > -1)
-                    {
-                        Signal response = new Signal(Action.LOGIN,true,userData,"");
-
-                        // After call loginAPI transfer response to the client
-                        this.objectOutputStream.writeObject(response);
-                    }
-                    else
-                    {
-                        Signal response = new Signal(Action.LOGIN,false,userData,"Your account is not valid");
-
-                        // After call loginAPI transfer response to the client
-                        this.objectOutputStream.writeObject(response);
-                    }
-
-
-                }
-            }
-            catch (IOException | ClassNotFoundException exception)
-            {
-                System.out.println(exception);
                 break;
             }
+
+            // Classify request actions
+            switch (request.getAction())
+            {
+                case LOGIN:
+                    status = this.callLoginAPI((User) request.getData());
+                    break;
+                case REGISTER:
+                    status = this.callRegisterAPI((User) request.getData());
+                    break;
+                default:
+                    System.out.println("A client call to unknown function !!");
+                    status = false;
+            }
+        }
+    }
+
+    private boolean callLoginAPI(User user)
+    {
+        // Call call loginAPI in authentication controller
+        User userData = AuthenticationController.loginAPI(user);
+        if(userData.getId() > -1)
+        {
+            Signal response = new Signal(Action.LOGIN,true,userData,"");
+
+            // After call loginAPI transfer response to the client
+            return this.sendResponse(response);
+        }
+        else
+        {
+            Signal response = new Signal(Action.LOGIN,false,userData,"Your account is not valid");
+
+            // After call loginAPI transfer response to the client
+            return this.sendResponse(response);
+        }
+    }
+
+    private boolean callRegisterAPI(User user)
+    {
+        if(AuthenticationController.registerAPI(user))
+        {
+            Signal response = new Signal(Action.REGISTER,true,"Your account is created","");
+
+            // After call loginAPI transfer response to the client
+            return this.sendResponse(response);
+        }
+        else
+        {
+            Signal response = new Signal(Action.REGISTER,false,null,"Your username is already in use");
+
+            // After call loginAPI transfer response to the client
+            return this.sendResponse(response);
         }
     }
 }
