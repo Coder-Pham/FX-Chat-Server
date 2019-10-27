@@ -11,7 +11,6 @@ import java.sql.SQLException;
 
 public class Server {
     private ServerSocket serverSocket;
-    private UserManager userManager;
 
     public Server()
     {
@@ -19,8 +18,8 @@ public class Server {
         {
             System.out.println("****** FXChat Server start ******");
             this.serverSocket = new ServerSocket(ConfigVariable.port);
-            this.userManager = new UserManager();
             Database.getInstance();
+            UserManager.getInstance();
         }
         catch (IOException | SQLException exception)
         {
