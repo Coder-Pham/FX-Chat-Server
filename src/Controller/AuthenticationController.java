@@ -3,7 +3,6 @@ package Controller;
 import Database.Database;
 import Model.User;
 
-import java.util.ArrayList;
 
 public class AuthenticationController {
     public static User loginAPI(User user)
@@ -15,5 +14,10 @@ public class AuthenticationController {
             return dbUser;
         }
         return new User(-1,"","","");
+    }
+
+    public static boolean registerAPI(User user)
+    {
+        return Database.addUser(user);
     }
 }
