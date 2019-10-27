@@ -12,13 +12,13 @@ public class Database {
     private Database() {
         // test connection to database
         try {
-            Connection connection = DataSource.getConnection();
+            DataSource.getConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static void getInstance() throws SQLException {
+    public static void getInstance() {
         if (instance == null) {
             instance = new Database();
         }
@@ -96,7 +96,7 @@ public class Database {
                 //Execute a query
                 System.out.println("Creating getUserList statement...");
                 PreparedStatement pst = connection.prepareStatement(sql);
-                int rs = pst.executeUpdate();
+                pst.executeUpdate();
 
                 status.set(true);
             } catch (SQLException e) {

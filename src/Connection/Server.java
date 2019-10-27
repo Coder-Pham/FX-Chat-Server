@@ -7,7 +7,6 @@ import Helper.UserManager;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.SQLException;
 
 public class Server {
     private ServerSocket serverSocket;
@@ -18,8 +17,8 @@ public class Server {
             this.serverSocket = new ServerSocket(ConfigVariable.port);
             Database.getInstance();
             UserManager.getInstance();
-        } catch (IOException | SQLException exception) {
-            System.out.println(exception);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -35,8 +34,9 @@ public class Server {
                 ClientHandler clientHandler = new ClientHandler(client);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
-            } catch (IOException exception) {
-                System.out.println(exception);
+            } catch (IOException e) {
+                e.printStackTrace();
+                break;
             }
         }
     }
