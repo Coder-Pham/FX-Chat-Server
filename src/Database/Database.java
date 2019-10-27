@@ -1,56 +1,41 @@
 package Database;
 
+import Model.User;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import Model.User;
-
 public class Database {
-    // JDBC driver name and database URL
-    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://fxchatdb.mysql.database.azure.com:3306/fxchatdb?autoReconnect=true&useUnicode=yes&serverTimezone=UTC&useSSL=true&requireSSL=false";
-
-    //  Database credentials
-    private static final String USER = "fxchat@fxchatdb";
-    private static final String PASS = "fxch@tp@ssw0rd";
-
     private static Database instance;
-    private static Connection connection;
 
-    private Database() throws SQLException {
+    private Database() {
+        // test connection to database
         try {
-            Class.forName(JDBC_DRIVER);
-            connection = DriverManager.getConnection(DB_URL, USER, PASS);
-        } catch (ClassNotFoundException ex) {
-            System.out.println("Database Connection Creation Failed : " + ex.getMessage());
+            DataSource.getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
-    private Connection getConnection() {
-        return connection;
-    }
-
-    public static void getInstance() throws SQLException {
+    public static void getInstance() {
         if (instance == null) {
             instance = new Database();
-        } else if (instance.getConnection().isClosed()) {
-            instance = new Database();
         }
-
     }
 
     public static ArrayList<User> getUserList() {
-        Statement stmt = null;
-        ArrayList<User> user_list = new ArrayList<>();
+        String sql = "SELECT * FROM fxchatdb.user";
+        ArrayList<User> user_list = null;
 
         try {
+            Connection connection = DataSource.getConnection();
             //Execute a query
             System.out.println("Creating getUserList statement...");
-            stmt = connection.createStatement();
-            String sql = "SELECT * FROM fxchatdb.user";
-            ResultSet rs = stmt.executeQuery(sql);
+            PreparedStatement pst = connection.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
 
+            user_list = new ArrayList<>();
             //Extract data from result set
             while (rs.next()) {
                 //Retrieve by column name
@@ -62,35 +47,25 @@ public class Database {
                 User new_user = new User(id, user_name, password, nick_name);
                 user_list.add(new_user);
             }
-            //Clean-up environment
-            rs.close();
-            stmt.close();
-        } catch (SQLException se) {
-            //Handle errors for JDBC
-            se.printStackTrace();
-        } finally {
-            //finally block used to close resources
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException ignored) {
-            }// nothing we can do
-        }//end try
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         return user_list;
     }
 
     public static User getUser(String username) {
-        Statement stmt = null;
-        User user = new User(-1, "", "", "");
+        String sql = String.format("SELECT * FROM fxchatdb.user WHERE user_name=\"%s\"", username);
+        User user = null;
 
         try {
+            Connection connection = DataSource.getConnection();
             //Execute a query
-            System.out.println("Creating getUser statement...");
-            stmt = connection.createStatement();
-            String sql = String.format("SELECT * FROM fxchatdb.user WHERE user_name=\"%s\"", username);
-            ResultSet rs = stmt.executeQuery(sql);
+            System.out.println("Creating getUserList statement...");
+            PreparedStatement pst = connection.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
 
+            user = new User(-1, "", "", "");
             //Extract data from result set
             while (rs.next()) {
                 //Retrieve by column name
@@ -104,52 +79,30 @@ public class Database {
                 user.setPassword(password);
                 user.setNickname(nick_name);
             }
-            //Clean-up environment
-            rs.close();
-            stmt.close();
-        } catch (SQLException se) {
-            //Handle errors for JDBC
-            se.printStackTrace();
-        } finally {
-            //finally block used to close resources
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException ignored) {
-            }// nothing we can do
-        }//end try
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         return user;
     }
 
     public static boolean addUser(User newUser) {
+        String sql = String.format("INSERT INTO fxchatdb.user (user_name, password, nick_name) VALUES (\"%s\",\"%s\",\"%s\")", newUser.getUsername(), newUser.getPassword(), newUser.getNickname());
         AtomicBoolean status = new AtomicBoolean(false);
 
-        if (getUser(newUser.getUsername()).getUsername() == "") {
-            Statement stmt = null;
+        if (getUser(newUser.getUsername()).getUsername().equals("")) {
             try {
+                Connection connection = DataSource.getConnection();
                 //Execute a query
-                System.out.println("Creating addUser statement...");
-                stmt = connection.createStatement();
-                String sql = String.format("INSERT INTO fxchatdb.user (user_name, password, nick_name) VALUES (\"%s\",\"%s\",\"%s\")", newUser.getUsername(), newUser.getPassword(), newUser.getNickname());
-                stmt.executeUpdate(sql);
+                System.out.println("Creating getUserList statement...");
+                PreparedStatement pst = connection.prepareStatement(sql);
+                pst.executeUpdate();
 
                 status.set(true);
-                //Clean-up environment
-                stmt.close();
-            } catch (SQLException se) {
-                //Handle errors for JDBC
-                se.printStackTrace();
-            } finally {
-                //finally block used to close resources
-                try {
-                    if (stmt != null)
-                        stmt.close();
-                } catch (SQLException ignored) {
-                }// nothing we can do
-            }//end try
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-
         return status.get();
     }
 
