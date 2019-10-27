@@ -22,6 +22,7 @@ public class Server {
         }
     }
 
+    @SuppressWarnings("InfiniteLoopStatement")
     public void turnOn() {
         while (true) {
             try {
@@ -36,7 +37,6 @@ public class Server {
                 thread.start();
             } catch (IOException e) {
                 e.printStackTrace();
-                break;
             }
         }
     }
