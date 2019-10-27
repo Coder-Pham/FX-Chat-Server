@@ -18,12 +18,12 @@ public class UserManager {
         }
     }
 
-    public static void addUserOnline(User newUser, ObjectOutputStream oos) {
+    public synchronized static void addUserOnline(User newUser, ObjectOutputStream oos) {
         userOnlineList.add(newUser);
         userOOSList.add(oos);
     }
 
-    public static void removeUserOnline(User user, ObjectOutputStream oos) {
+    public synchronized static void removeUserOnline(User user, ObjectOutputStream oos) {
         userOnlineList.remove(user);
         userOOSList.remove(oos);
     }

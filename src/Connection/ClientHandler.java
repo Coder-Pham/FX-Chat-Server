@@ -105,7 +105,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private synchronized void closeConnection() {
+    private void closeConnection() {
         // remove user from online list
         if (currentUser != null) {
             UserManager.removeUserOnline(currentUser, objectOutputStream);
