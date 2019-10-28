@@ -1,6 +1,7 @@
 package Helper;
 
 import Model.User;
+import Model.UserOnlineList;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,8 +33,10 @@ public class UserManager {
         return userOnlineList.size();
     }
 
-    public static ArrayList<User> getUserOnlineList() {
-        return new ArrayList<>(userOnlineList);
+    public static UserOnlineList getUserOnlineList() {
+        UserOnlineList result = new UserOnlineList();
+        result.setUsers(new ArrayList<>(userOnlineList));
+        return result;
     }
 
     public static ArrayList<ObjectOutputStream> getUserOOSList() {
