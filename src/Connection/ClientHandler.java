@@ -2,11 +2,13 @@ package Connection;
 
 import Controller.AuthenticationController;
 import Model.User;
+import Helper.UserManager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ClientHandler implements Runnable {
 
@@ -46,11 +48,19 @@ public class ClientHandler implements Runnable {
                 case REGISTER:
                     status = this.callRegisterAPI((User) request.getData());
                     break;
+                case UOL:
+                    status = this.callGetUserOnlineList();
+                    break;
+                case LOGOUT:
+                    status = false;
+                    break;
                 default:
                     System.out.println("A client call to unknown function !!");
                     status = false;
             }
         }
+        this.closeConnection();
+        this.updateUserOnlineList();
     }
 
     private boolean callLoginAPI(User user)
@@ -59,6 +69,12 @@ public class ClientHandler implements Runnable {
         User userData = AuthenticationController.loginAPI(user);
         if(userData.getId() > -1)
         {
+            // add user to online list
+            currentUser = userData;
+            UserManager.addUserOnline(currentUser, objectOutputStream);
+            this.updateUserOnlineList();
+
+
             Signal response = new Signal(Action.LOGIN,true,userData,"");
 
             // After call loginAPI transfer response to the client
@@ -88,6 +104,24 @@ public class ClientHandler implements Runnable {
 
             // After call loginAPI transfer response to the client
             return Signal.sendResponse(response,this.objectOutputStream);
+        }
+    }
+
+    private boolean callGetUserOnlineList()
+    {
+        Signal response = new Signal(Action.UOL,true,UserManager.getUserOnlineList(),"");
+
+        return Signal.sendResponse(response,this.objectOutputStream);
+    }
+
+    private void updateUserOnlineList()
+    {
+        ArrayList<ObjectOutputStream> userOnlineList = UserManager.getUserOOSList();
+        for(int i = 0; i < userOnlineList.size(); i++)
+        {
+            Signal response = new Signal(Action.UOL,true,UserManager.getUserOnlineList(),"");
+
+            Signal.sendResponse(response,userOnlineList.get(i));
         }
     }
 
