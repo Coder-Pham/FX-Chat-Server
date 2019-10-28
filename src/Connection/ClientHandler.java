@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ClientHandler implements Runnable {
 
@@ -26,82 +27,101 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private Signal getRequest() {
-        try {
-            return (Signal) this.objectInputStream.readObject();
-        } catch (IOException | ClassNotFoundException exception) {
-            System.out.println("ClientHandler-getRequest(): " + exception);
-            // if user disconnect
-            closeConnection();
-            return null;
-        }
-    }
-
-    private boolean sendResponse(Signal response) {
-        try {
-            this.objectOutputStream.writeObject(response);
-            return true;
-        } catch (IOException exception) {
-            System.out.println("ClientHandler-sendResponse(): " + exception);
-            return false;
-        }
-    }
-
     @Override
     public void run() {
         boolean status = true;
-        while (status && this.client.isConnected()) {
+        while(status && this.client.isConnected())
+        {
             //Read request object from client
-            Signal request = this.getRequest();
-            if (request == null) {
+            Signal request = Signal.getRequest(this.objectInputStream);
+            if(request == null)
+            {
                 break;
             }
 
             // Classify request actions
-            switch (request.getAction()) {
+            switch (request.getAction())
+            {
                 case LOGIN:
                     status = this.callLoginAPI((User) request.getData());
                     break;
                 case REGISTER:
                     status = this.callRegisterAPI((User) request.getData());
                     break;
+                case UOL:
+                    status = this.callGetUserOnlineList();
+                    break;
+                case LOGOUT:
+                    status = false;
+                    break;
                 default:
                     System.out.println("A client call to unknown function !!");
                     status = false;
             }
         }
+        this.closeConnection();
+        this.updateUserOnlineList();
     }
 
-    private boolean callLoginAPI(User user) {
+    private boolean callLoginAPI(User user)
+    {
         // Call call loginAPI in authentication controller
         User userData = AuthenticationController.loginAPI(user);
-        if (userData.getId() > -1) {
+        if(userData.getId() > -1)
+        {
             // add user to online list
             currentUser = userData;
             UserManager.addUserOnline(currentUser, objectOutputStream);
+            this.updateUserOnlineList();
 
-            Signal response = new Signal(Action.LOGIN, true, userData, "");
-            // After call loginAPI transfer response to the client
-            return this.sendResponse(response);
-        } else {
-            Signal response = new Signal(Action.LOGIN, false, userData, "Your account is not valid");
+
+            Signal response = new Signal(Action.LOGIN,true,userData,"");
 
             // After call loginAPI transfer response to the client
-            return this.sendResponse(response);
+            return Signal.sendResponse(response,this.objectOutputStream);
+        }
+        else
+        {
+            Signal response = new Signal(Action.LOGIN,false,userData,"Your account is not valid");
+
+            // After call loginAPI transfer response to the client
+            return Signal.sendResponse(response,this.objectOutputStream);
         }
     }
 
-    private boolean callRegisterAPI(User user) {
-        if (AuthenticationController.registerAPI(user)) {
-            Signal response = new Signal(Action.REGISTER, true, "Your account is created", "");
+    private boolean callRegisterAPI(User user)
+    {
+        if(AuthenticationController.registerAPI(user))
+        {
+            Signal response = new Signal(Action.REGISTER,true,"Your account is created","");
 
             // After call loginAPI transfer response to the client
-            return this.sendResponse(response);
-        } else {
-            Signal response = new Signal(Action.REGISTER, false, null, "Your username is already in use");
+            return Signal.sendResponse(response,this.objectOutputStream);
+        }
+        else
+        {
+            Signal response = new Signal(Action.REGISTER,false,null,"Your username is already in use");
 
             // After call loginAPI transfer response to the client
-            return this.sendResponse(response);
+            return Signal.sendResponse(response,this.objectOutputStream);
+        }
+    }
+
+    private boolean callGetUserOnlineList()
+    {
+        Signal response = new Signal(Action.UOL,true,UserManager.getUserOnlineList(),"");
+
+        return Signal.sendResponse(response,this.objectOutputStream);
+    }
+
+    private void updateUserOnlineList()
+    {
+        ArrayList<ObjectOutputStream> userOnlineList = UserManager.getUserOOSList();
+        for(int i = 0; i < userOnlineList.size(); i++)
+        {
+            Signal response = new Signal(Action.UOL,true,UserManager.getUserOnlineList(),"");
+
+            Signal.sendResponse(response,userOnlineList.get(i));
         }
     }
 
