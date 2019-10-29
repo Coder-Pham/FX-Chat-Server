@@ -1,6 +1,7 @@
 package Connection;
 
 import Controller.AuthenticationController;
+import Model.Message;
 import Model.User;
 import Helper.UserManager;
 
@@ -48,6 +49,9 @@ public class ClientHandler implements Runnable {
                 case UOL:
                     status = this.callGetUserOnlineList();
                     break;
+                case MESSAGE:
+                    status = this.callSendMessage((Message) request.getData());
+                    break;
                 case LOGOUT:
                     status = false;
                     break;
@@ -84,7 +88,7 @@ public class ClientHandler implements Runnable {
 
     private boolean callRegisterAPI(User user) {
         if (AuthenticationController.registerAPI(user)) {
-            Signal response = new Signal(Action.REGISTER, true, "Your account is created", "");
+            Signal response = new Signal(Action.REGISTER, true, user, "");
 
             // After call loginAPI transfer response to the client
             return Signal.sendResponse(response, this.objectOutputStream);
@@ -100,6 +104,26 @@ public class ClientHandler implements Runnable {
         Signal response = new Signal(Action.UOL, true, UserManager.getUserOnlineList(), "");
 
         return Signal.sendResponse(response, this.objectOutputStream);
+    }
+
+    private boolean callSendMessage(Message message)
+    {
+        User receiver = message.getReceiver();
+        ObjectOutputStream receiverOOS = UserManager.getUserOOS(receiver.getUsername());
+        if(receiverOOS != null)
+        {
+            Signal response = new Signal(Action.MESSAGE,true,message,"");
+
+            if(Signal.sendResponse(response,receiverOOS))
+            {
+                System.out.println("Send message successfully");
+            }
+            else
+            {
+                System.out.println("Could not send message");
+            }
+        }
+        return true;
     }
 
     private void updateUserOnlineList() {
