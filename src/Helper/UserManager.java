@@ -5,6 +5,7 @@ import Model.UserOnlineList;
 
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class UserManager {
@@ -36,8 +37,8 @@ public class UserManager {
         return result;
     }
 
-    public static ArrayList<ObjectOutputStream> getUserOOSList() {
-        return new ArrayList<>(userOnlineList.values());
+    public static Collection<ObjectOutputStream> getUserOOSList() {
+        return userOnlineList.values();
     }
 
     public static ObjectOutputStream getUserOOS(User user) {
