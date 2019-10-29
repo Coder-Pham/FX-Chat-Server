@@ -47,6 +47,10 @@ public class Database {
                 User new_user = new User(id, user_name, password, nick_name);
                 user_list.add(new_user);
             }
+            //Clean up environment
+            rs.close();
+            pst.close();
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -79,6 +83,10 @@ public class Database {
                 user.setPassword(password);
                 user.setNickname(nick_name);
             }
+            //Clean up environment
+            rs.close();
+            pst.close();
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -99,12 +107,14 @@ public class Database {
                 pst.executeUpdate();
 
                 status.set(true);
+                //Clean up environment
+                pst.close();
+                connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
         return status.get();
     }
-
 }
 
