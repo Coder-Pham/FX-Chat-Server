@@ -72,6 +72,7 @@ public class ClientHandler implements Runnable {
             // add user to online list
             currentUser = userData;
             UserManager.addUserOnline(currentUser, objectOutputStream);
+            UserManager.getUserOnlineList();
             this.updateUserOnlineList();
 
 
@@ -117,18 +118,18 @@ public class ClientHandler implements Runnable {
     private void updateUserOnlineList()
     {
         ArrayList<ObjectOutputStream> userOnlineList = UserManager.getUserOOSList();
-        for(int i = 0; i < userOnlineList.size(); i++)
-        {
-            Signal response = new Signal(Action.UOL,true,UserManager.getUserOnlineList(),"");
-
-            Signal.sendResponse(response,userOnlineList.get(i));
+        for (ObjectOutputStream outputStream : userOnlineList) {
+            if (outputStream != this.objectOutputStream) {
+                Signal response = new Signal(Action.UOL, true, UserManager.getUserOnlineList(), "");
+                Signal.sendResponse(response, outputStream);
+            }
         }
     }
 
     private void closeConnection() {
         // remove user from online list
         if (currentUser != null) {
-            UserManager.removeUserOnline(currentUser, objectOutputStream);
+            UserManager.removeUserOnline(currentUser);
         }
 
         // close resources

@@ -1,14 +1,14 @@
 package Helper;
 
 import Model.User;
+import Model.UserOnlineList;
 
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.io.*;
+import java.util.HashMap;
 
 public class UserManager {
-    private static HashSet<User> userOnlineList = new HashSet<>();
-    private static HashSet<ObjectOutputStream> userOOSList = new HashSet<>();
+    private static final HashMap<User, ObjectOutputStream> userOnlineList = new HashMap<>();
 
     private static UserManager instance;
 
@@ -19,24 +19,28 @@ public class UserManager {
     }
 
     public synchronized static void addUserOnline(User newUser, ObjectOutputStream oos) {
-        userOnlineList.add(newUser);
-        userOOSList.add(oos);
+        userOnlineList.put(newUser, oos);
     }
 
-    public synchronized static void removeUserOnline(User user, ObjectOutputStream oos) {
+    public synchronized static void removeUserOnline(User user) {
         userOnlineList.remove(user);
-        userOOSList.remove(oos);
     }
 
     public static int getNumUserOnline() {
         return userOnlineList.size();
     }
 
-    public static ArrayList<User> getUserOnlineList() {
-        return new ArrayList<>(userOnlineList);
+    public static UserOnlineList getUserOnlineList() {
+        UserOnlineList result = new UserOnlineList();
+        result.setUsers(new ArrayList<>(userOnlineList.keySet()));
+        return result;
     }
 
     public static ArrayList<ObjectOutputStream> getUserOOSList() {
-        return new ArrayList<>(userOOSList);
+        return new ArrayList<>(userOnlineList.values());
+    }
+
+    public static ObjectOutputStream getUserOOS(User user) {
+        return userOnlineList.get(user);
     }
 }
