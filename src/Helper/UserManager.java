@@ -1,5 +1,6 @@
 package Helper;
 
+import Database.Database;
 import Model.User;
 import Model.UserOnlineList;
 
@@ -41,7 +42,7 @@ public class UserManager {
         return userOnlineList.values();
     }
 
-    public static ObjectOutputStream getUserOOS(User user) {
-        return userOnlineList.get(user);
+    public static ObjectOutputStream getUserOOS(String username) {
+        return userOnlineList.get(Database.getUser(username));
     }
 }
