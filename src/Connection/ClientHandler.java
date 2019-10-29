@@ -119,9 +119,12 @@ public class ClientHandler implements Runnable {
         ArrayList<ObjectOutputStream> userOnlineList = UserManager.getUserOOSList();
         for(int i = 0; i < userOnlineList.size(); i++)
         {
-            Signal response = new Signal(Action.UOL,true,UserManager.getUserOnlineList(),"");
+            if(userOnlineList.get(i) != this.objectOutputStream)
+            {
+                Signal response = new Signal(Action.UOL,true,UserManager.getUserOnlineList(),"");
 
-            Signal.sendResponse(response,userOnlineList.get(i));
+                Signal.sendResponse(response,userOnlineList.get(i));
+            }
         }
     }
 
