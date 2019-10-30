@@ -1,7 +1,7 @@
 package Connection;
 
 import Controller.AuthenticationController;
-import Model.Message;
+import Model.MessageModel;
 import Model.User;
 import Model.FileInfo;
 import Helper.UserManager;
@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class ClientHandler implements Runnable {
 
@@ -51,7 +50,7 @@ public class ClientHandler implements Runnable {
                     status = this.callGetUserOnlineList();
                     break;
                 case MESSAGE:
-                    status = this.callSendMessage((Message) request.getData());
+                    status = this.callSendMessage((MessageModel) request.getData());
                     break;
                 case FILE:
                     status = this.callSendFile((FileInfo) request.getData());
@@ -110,7 +109,7 @@ public class ClientHandler implements Runnable {
         return Signal.sendResponse(response, this.objectOutputStream);
     }
 
-    private boolean callSendMessage(Message message) {
+    private boolean callSendMessage(MessageModel message) {
         User receiver = message.getReceiver();
         ObjectOutputStream receiverOOS = UserManager.getUserOOS(receiver.getUsername());
         if (receiverOOS != null) {
