@@ -19,28 +19,20 @@ public class Signal extends Model {
         this.error = error;
     }
 
-    public static Signal getRequest(ObjectInputStream objectInputStream)
-    {
-        try
-        {
+    public static Signal getRequest(ObjectInputStream objectInputStream) {
+        try {
             return (Signal) objectInputStream.readObject();
-        }
-        catch (IOException | ClassNotFoundException exception)
-        {
+        } catch (IOException | ClassNotFoundException exception) {
             System.out.println("Signal-getRequest(): " + exception);
             return null;
         }
     }
 
-    public static boolean sendResponse(Signal response, ObjectOutputStream objectOutputStream)
-    {
-        try
-        {
+    public static boolean sendResponse(Signal response, ObjectOutputStream objectOutputStream) {
+        try {
             objectOutputStream.writeObject(response);
             return true;
-        }
-        catch (IOException exception)
-        {
+        } catch (IOException exception) {
             System.out.println("Signal-sendResponse(): " + exception);
             return false;
         }
