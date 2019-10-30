@@ -65,7 +65,7 @@ public class Database {
         try {
             Connection connection = DataSource.getConnection();
             //Execute a query
-            System.out.println("Creating getUserList statement...");
+            System.out.println("Creating getUser statement...");
             PreparedStatement pst = connection.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();
 
@@ -102,7 +102,7 @@ public class Database {
             try {
                 Connection connection = DataSource.getConnection();
                 //Execute a query
-                System.out.println("Creating getUserList statement...");
+                System.out.println("Creating addUser statement...");
                 PreparedStatement pst = connection.prepareStatement(sql);
                 pst.executeUpdate();
 
