@@ -76,7 +76,6 @@ public class ClientHandler implements Runnable {
             UserManager.addUserOnline(currentUser, objectOutputStream);
             this.updateUserOnlineList();
 
-
             Signal response = new Signal(Action.LOGIN, true, userData, "");
 
             // After call loginAPI transfer response to the client

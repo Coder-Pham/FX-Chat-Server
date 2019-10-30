@@ -11,6 +11,14 @@ public class FileInfo implements Serializable {
     private long fileSize;
     private byte[] dataBytes;
 
+    public FileInfo(User sender, User receiver, String filename, long fileSize, byte[] dataBytes) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.filename = filename;
+        this.fileSize = fileSize;
+        this.dataBytes = dataBytes;
+    }
+
     public User getSender() {
         return sender;
     }
