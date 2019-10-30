@@ -8,9 +8,11 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class UserManager {
-    private static final HashMap<User, ObjectOutputStream> userOnlineList = new HashMap<>();
+    private static final HashSet<User> userOnlineList = new HashSet<>();
+    private static final HashMap<String, ObjectOutputStream> userOnlineOOSList = new HashMap<>();
 
     private static UserManager instance;
 
@@ -21,11 +23,13 @@ public class UserManager {
     }
 
     public synchronized static void addUserOnline(User newUser, ObjectOutputStream oos) {
-        userOnlineList.put(newUser, oos);
+        userOnlineList.add(newUser);
+        userOnlineOOSList.put(newUser.getUsername(), oos);
     }
 
     public synchronized static void removeUserOnline(User user) {
         userOnlineList.remove(user);
+        userOnlineOOSList.remove(user.getUsername());
     }
 
     public static int getNumUserOnline() {
@@ -34,15 +38,15 @@ public class UserManager {
 
     public static UserOnlineList getUserOnlineList() {
         UserOnlineList result = new UserOnlineList();
-        result.setUsers(new ArrayList<>(userOnlineList.keySet()));
+        result.setUsers(new ArrayList<>(userOnlineList));
         return result;
     }
 
     public static Collection<ObjectOutputStream> getUserOOSList() {
-        return userOnlineList.values();
+        return userOnlineOOSList.values();
     }
 
     public static ObjectOutputStream getUserOOS(String username) {
-        return userOnlineList.get(Database.getUser(username));
+        return userOnlineOOSList.get(username);
     }
 }
