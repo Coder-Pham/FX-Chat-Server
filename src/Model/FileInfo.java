@@ -1,10 +1,6 @@
 package Model;
 
-import java.io.Serializable;
-
-public class FileInfo implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+public class FileInfo extends Model {
     private User sender;
     private User receiver;
     private String filename;
