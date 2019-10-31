@@ -1,8 +1,7 @@
 package Helper;
 
 import Database.Database;
-import Model.User;
-import Model.UserOnlineList;
+import Model.*;
 
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class UserManager {
-    private static final HashMap<User, ObjectOutputStream> userOnlineList = new HashMap<>();
+    private static final HashMap<User, UserOnlineData> userOnlineList = new HashMap<>();
 
     private static UserManager instance;
 
@@ -20,8 +19,9 @@ public class UserManager {
         }
     }
 
-    public synchronized static void addUserOnline(User newUser, ObjectOutputStream oos) {
-        userOnlineList.put(newUser, oos);
+    public synchronized static void addUserOnline(User newUser, ObjectOutputStream oos, String address) {
+        UserOnlineData userOnlineData = new UserOnlineData(newUser,oos,address);
+        userOnlineList.put(newUser, userOnlineData);
     }
 
     public synchronized static void removeUserOnline(User user) {
@@ -38,11 +38,24 @@ public class UserManager {
         return result;
     }
 
-    public static Collection<ObjectOutputStream> getUserOOSList() {
+    public static UserAddressList getUserAddressList()
+    {
+        ArrayList<UserAddress> userAddresses = new ArrayList<UserAddress>();
+        for (UserOnlineData userOnlineData : UserManager.getUserOOSList()) {
+            UserAddress userAddress = new UserAddress(userOnlineData.getUser(),userOnlineData.getAddress());
+            userAddresses.add(userAddress);
+        }
+        UserAddressList userAddressList = new UserAddressList();
+        userAddressList.setUserAddresses(userAddresses);
+        return userAddressList;
+    }
+
+    public static Collection<UserOnlineData> getUserOOSList() {
         return userOnlineList.values();
     }
 
     public static ObjectOutputStream getUserOOS(String username) {
-        return userOnlineList.get(Database.getUser(username));
+        UserOnlineData userOnlineData = userOnlineList.get(Database.getUser(username));
+        return userOnlineData.getObjectOutputStream();
     }
 }

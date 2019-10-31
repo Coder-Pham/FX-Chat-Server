@@ -5,6 +5,7 @@ import Model.MessageModel;
 import Model.User;
 import Model.FileInfo;
 import Helper.UserManager;
+import Model.UserOnlineData;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -73,7 +74,7 @@ public class ClientHandler implements Runnable {
         if (userData.getId() > -1) {
             // add user to online list
             currentUser = userData;
-            UserManager.addUserOnline(currentUser, objectOutputStream);
+            UserManager.addUserOnline(currentUser, objectOutputStream, this.client.getInetAddress().getHostAddress());
             this.updateUserOnlineList();
 
             Signal response = new Signal(Action.LOGIN, true, userData, "");
@@ -103,7 +104,7 @@ public class ClientHandler implements Runnable {
     }
 
     private boolean callGetUserOnlineList() {
-        Signal response = new Signal(Action.UOL, true, UserManager.getUserOnlineList(), "");
+        Signal response = new Signal(Action.UOL, true, UserManager.getUserAddressList(), "");
 
         return Signal.sendResponse(response, this.objectOutputStream);
     }
@@ -139,10 +140,10 @@ public class ClientHandler implements Runnable {
     }
 
     private void updateUserOnlineList() {
-        for (ObjectOutputStream outputStream : UserManager.getUserOOSList()) {
-            if (outputStream != this.objectOutputStream) {
-                Signal response = new Signal(Action.UOL, true, UserManager.getUserOnlineList(), "");
-                Signal.sendResponse(response, outputStream);
+        for (UserOnlineData userOnlineData : UserManager.getUserOOSList()) {
+            if (userOnlineData.getObjectOutputStream() != this.objectOutputStream) {
+                Signal response = new Signal(Action.UOL, true, UserManager.getUserAddressList(), "");
+                Signal.sendResponse(response, userOnlineData.getObjectOutputStream());
             }
         }
     }
