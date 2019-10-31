@@ -2,7 +2,7 @@ package Model;
 
 import java.util.ArrayList;
 
-public class UserAddressList {
+public class UserAddressList extends Model{
     private ArrayList<UserAddress> userAddresses;
 
     public ArrayList<UserAddress> getUserAddresses() {

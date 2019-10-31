@@ -1,6 +1,6 @@
 package Model;
 
-public class UserAddress {
+public class UserAddress extends Model {
     private User user;
     private String address;
 
