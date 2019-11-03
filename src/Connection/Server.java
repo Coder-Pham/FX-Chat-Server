@@ -1,12 +1,13 @@
 package Connection;
 
-import Config.ConfigVariable;
 import Database.Database;
 import Helper.UserManager;
+import Helper.ReadPropertyHelper;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Objects;
 
 public class Server {
     private ServerSocket serverSocket;
@@ -14,7 +15,7 @@ public class Server {
     public Server() {
         try {
             System.out.println("****** FXChat Server start ******");
-            this.serverSocket = new ServerSocket(ConfigVariable.port);
+            this.serverSocket = new ServerSocket(Integer.parseInt(Objects.requireNonNull(ReadPropertyHelper.getProperty("server_port"))));
             Database.getInstance();
             UserManager.getInstance();
         } catch (IOException e) {
