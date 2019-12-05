@@ -12,9 +12,9 @@ class DataSource {
     private static HikariDataSource ds;
 
     static {
-        config.setJdbcUrl("jdbc:mysql://fxchatdb.mysql.database.azure.com:3306/fxchatdb?autoReconnect=true&useUnicode=yes&serverTimezone=UTC&useSSL=true&requireSSL=false");
-        config.setUsername("fxchat@fxchatdb");
-        config.setPassword("fxch@tp@ssw0rd");
+        config.setJdbcUrl("jdbc:mysql://database-1.ctk7womyxmbz.us-east-1.rds.amazonaws.com:3306/fxchatdb?autoReconnect=true&useUnicode=yes&serverTimezone=UTC&useSSL=true&requireSSL=false");
+        config.setUsername("admin");
+        config.setPassword("fxchatpassword12345");
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
